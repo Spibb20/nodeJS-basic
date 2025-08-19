@@ -13,4 +13,4 @@ console.log("Reading file...\n");
 
 fs.writeFileSync("README.md", "hi", "utf-8");
 
-calcSum(4, 3);
+console.log(calcSum(4, 3));

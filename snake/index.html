@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snaky Snaky</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        background-color: darkgray;
+      }
+      .board {
+        margin: 50px auto;
+        width: 300px;
+        height: 300px;
+        background-color: black;
+        position: relative;
+      }
+      .snakeHead {
+        width: 20px;
+        height: 20px;
+        background-color: greenyellow;
+        position: absolute;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="board">
+      <div class="snakeHead" id="head"></div>
+    </div>
+
+    <script>
+      let headX = 0;
+      let headY = 0;
+      let direction = "right";
+
+      function changeDircetion() {
+        direction = newDirection;
+      }
+
+      function goRight() {
+        headX = headX + 1;
+        if (headX === 300) {
+          headX = -20;
+        }
+      }
+      function goLeft() {
+        headX = headX - 1;
+        if (headX === 0) {
+          headX = 320;
+        }
+      }
+
+      function goDown() {
+        headY = headY + 1;
+        if (headY === 320) {
+          headY = 0;
+        }
+      }
+      function goUp() {
+        headY = headY - 1;
+        if (headY === -20) {
+          headY = 320;
+        }
+      }
+
+      function render() {
+        document.getElementById("head").style.left = `${headX}px`;
+        document.getElementById("head").style.top = `${headY}px`;
+      }
+
+      setInterval(() => {
+        if (direction === "right") {
+          goRight();
+        } else if (direction === "left") {
+          goLeft();
+        } else if (direction === "up") {
+          goUp();
+        } else if (direction === "down") {
+          goDown();
+        }
+        render();
+      }, 10);
+
+      addEventListener("keydown", (event) => {
+        if (event.key === "ArrowDown") {
+          changeDircetion("down");
+        } else if (event.key === "ArrowUp") {
+          changeDircetion("up");
+        } else if (event.key === "ArrowLeft") {
+          changeDircetion("left");
+        } else if (event.key === "ArrowRight") {
+          changeDircetion("right");
+        }
+      });
+    </script>
+  </body>
+</html>
