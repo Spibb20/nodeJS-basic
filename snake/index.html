@@ -19,6 +19,7 @@
         height: 300px;
         background-color: black;
         position: relative;
+        overflow: hidden;
       }
       .snakeHead {
         width: 20px;
@@ -26,19 +27,27 @@
         background-color: greenyellow;
         position: absolute;
       }
+      .prey {
+        width: 10px;
+        height: 10px;
+        background-color: tomato;
+        border-radius: 50%;
+      }
     </style>
   </head>
   <body>
     <div class="board">
       <div class="snakeHead" id="head"></div>
+      <div class="prey"></div>
     </div>
 
     <script>
       let headX = 0;
       let headY = 0;
       let direction = "right";
+      let prey;
 
-      function changeDircetion() {
+      function changeDircetion(newDirection) {
         direction = newDirection;
       }
 
@@ -50,21 +59,21 @@
       }
       function goLeft() {
         headX = headX - 1;
-        if (headX === 0) {
-          headX = 320;
+        if (headX === -20) {
+          headX = 300;
         }
       }
 
       function goDown() {
         headY = headY + 1;
-        if (headY === 320) {
-          headY = 0;
+        if (headY === 300) {
+          headY = -20;
         }
       }
       function goUp() {
         headY = headY - 1;
         if (headY === -20) {
-          headY = 320;
+          headY = 300;
         }
       }
 
@@ -84,7 +93,7 @@
           goDown();
         }
         render();
-      }, 10);
+      }, 29);
 
       addEventListener("keydown", (event) => {
         if (event.key === "ArrowDown") {
@@ -97,6 +106,10 @@
           changeDircetion("right");
         }
       });
+
+      function spawnPrey() {
+        prey = Math.floor(Math.random() * 300 + 1);
+      }
     </script>
   </body>
 </html>
