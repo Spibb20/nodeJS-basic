@@ -15,17 +15,8 @@
       }
       .board {
         margin: 50px auto;
-        width: 300px;
-        height: 300px;
         background-color: black;
         position: relative;
-        overflow: hidden;
-      }
-      .snakeHead {
-        width: 20px;
-        height: 20px;
-        background-color: greenyellow;
-        position: absolute;
       }
       .prey {
         width: 10px;
@@ -33,19 +24,45 @@
         background-color: tomato;
         border-radius: 50%;
       }
+      .snake-tail {
+        background-color: springgreen;
+        position: absolute;
+        border-radius: 5px;
+      }
     </style>
   </head>
   <body>
-    <div class="board">
-      <div class="snakeHead" id="head"></div>
-      <div class="prey"></div>
+    <div class="board" id="board">
+      <div id="tails"></div>
+      <div class="prey" id="preyid"></div>
     </div>
 
     <script>
+      const unit = 20;
+      const board = {
+        height: 15,
+        width: 15,
+      };
+
       let headX = 0;
       let headY = 0;
+      const tails = [
+        { x: 2, y: 5 },
+        { x: 3, y: 5 },
+        { x: 4, y: 5 },
+      ];
       let direction = "right";
-      let prey;
+      let preyX = 0;
+      let preyY = 0;
+
+      function init() {
+        const boardWidth = board.width * unit;
+        document.getElementById("board").style.width = `${boardWidth}px`;
+
+        const boardHeight = board.height * unit;
+        document.getElementById("board").style.height = `${boardHeight}px`;
+      }
+      init();
 
       function changeDircetion(newDirection) {
         direction = newDirection;
@@ -53,33 +70,43 @@
 
       function goRight() {
         headX = headX + 1;
-        if (headX === 300) {
-          headX = -20;
+        if (headX === board.width) {
+          headX = 0;
         }
       }
       function goLeft() {
         headX = headX - 1;
-        if (headX === -20) {
-          headX = 300;
+        if (headX === unit) {
+          headX = board.width;
         }
       }
 
       function goDown() {
         headY = headY + 1;
-        if (headY === 300) {
-          headY = -20;
+        if (headY === board.width) {
+          headY = -unit;
         }
       }
       function goUp() {
         headY = headY - 1;
-        if (headY === -20) {
-          headY = 300;
+        if (headY === unit) {
+          headY = board.height;
         }
       }
 
       function render() {
-        document.getElementById("head").style.left = `${headX}px`;
-        document.getElementById("head").style.top = `${headY}px`;
+        const tailsHtml = tails
+          .map(
+            (tail) => `<div style=" width: ${unit}px;
+        height: ${unit}px;
+        left: ${tail.x * unit}px;
+        top: ${tail.y * unit}px"
+        class="snake-tail"></div>
+        `
+          )
+          .join("");
+
+        document.getElementById("tails").innerHTML = tailsHtml;
       }
 
       setInterval(() => {
@@ -92,8 +119,12 @@
         } else if (direction === "down") {
           goDown();
         }
+
+        tails.push({ x: headX, y: headY });
+        tails.shift();
+
         render();
-      }, 29);
+      }, 200);
 
       addEventListener("keydown", (event) => {
         if (event.key === "ArrowDown") {
@@ -107,9 +138,14 @@
         }
       });
 
-      function spawnPrey() {
-        prey = Math.floor(Math.random() * 300 + 1);
-      }
+      setInterval(() => {
+        function spawnPrey() {
+          preyX = Math.floor(Math.random() * 100);
+          preyY = Math.floor(Math.random() * 100);
+          return preyX, preyY;
+        }
+        render();
+      }, 1);
     </script>
   </body>
 </html>
