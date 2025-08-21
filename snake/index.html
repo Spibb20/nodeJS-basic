@@ -15,19 +15,24 @@
       }
       .board {
         margin: 50px auto;
-        background-color: black;
+        background: radial-gradient(circle at center, #4caf50, #2e7d32 100%);
         position: relative;
+        border-radius: 12px;
+        border: 4px solid #1b5e20;
+        background-position: center;
+        overflow: hidden;
       }
       .prey {
-        width: 10px;
-        height: 10px;
         background-color: tomato;
         border-radius: 50%;
+        position: absolute;
       }
       .snake-tail {
-        background-color: springgreen;
+        background: radial-gradient(circle at 30% 30%, #66bb6a, #2e7d32);
         position: absolute;
-        border-radius: 5px;
+        border-radius: 50%;
+        box-shadow: inset -2px -2px 4px rgba(0, 0, 0, 0.3),
+          inset 2px 2px 4px rgba(255, 255, 255, 0.2);
       }
     </style>
   </head>
@@ -43,54 +48,75 @@
         height: 15,
         width: 15,
       };
+      const head = { x: 4, y: 5 };
 
-      let headX = 0;
-      let headY = 0;
       const tails = [
         { x: 2, y: 5 },
         { x: 3, y: 5 },
         { x: 4, y: 5 },
       ];
       let direction = "right";
-      let preyX = 0;
-      let preyY = 0;
+      let prey = {
+        x: 0,
+        y: 0,
+      };
+      const preyElement = document.getElementById("preyid");
+      const boardElement = document.getElementById("board");
+      const tailsElement = document.getElementById("tails");
 
       function init() {
         const boardWidth = board.width * unit;
-        document.getElementById("board").style.width = `${boardWidth}px`;
+        boardElement.style.width = `${boardWidth}px`;
 
         const boardHeight = board.height * unit;
-        document.getElementById("board").style.height = `${boardHeight}px`;
+        boardElement.style.height = `${boardHeight}px`;
+        generateNewPrey();
+
+        preyElement.style.height = `${unit}px`;
+        preyElement.style.width = `${unit}px`;
+        preyElement.style.left = `${prey.x * unit}px`;
+        preyElement.style.top = `${prey.y * unit}px`;
       }
       init();
 
       function changeDircetion(newDirection) {
+        if (direction === "top" || direction === "down") {
+          if (direction === "right" || direction === "left") {
+            direction = newDirection;
+          }
+        }
+        if (direction === "right" || direction === "left") {
+          if (direction === "top" || direction === "down") {
+            direction = newDirection;
+          }
+        }
+
         direction = newDirection;
       }
 
       function goRight() {
-        headX = headX + 1;
-        if (headX === board.width) {
-          headX = 0;
+        head.x = head.x + 1;
+        if (head.x === board.width) {
+          head.x = 0;
         }
       }
       function goLeft() {
-        headX = headX - 1;
-        if (headX === unit) {
-          headX = board.width;
+        head.x = head.x - 1;
+        if (head.x === -1) {
+          head.x = board.width;
         }
       }
 
       function goDown() {
-        headY = headY + 1;
-        if (headY === board.width) {
-          headY = -unit;
+        head.y = head.y + 1;
+        if (head.y === board.height) {
+          head.y = 0;
         }
       }
       function goUp() {
-        headY = headY - 1;
-        if (headY === unit) {
-          headY = board.height;
+        head.y = head.y - 1;
+        if (head.y === -1) {
+          head.y = board.height;
         }
       }
 
@@ -106,7 +132,16 @@
           )
           .join("");
 
-        document.getElementById("tails").innerHTML = tailsHtml;
+        tailsElement.innerHTML = tailsHtml;
+      }
+      function generateNewPrey() {
+        prey = {
+          x: Math.floor(Math.random() * board.width),
+          y: Math.floor(Math.random() * board.height),
+        };
+
+        preyElement.style.left = `${prey.x * unit}px`;
+        preyElement.style.top = `${prey.y * unit}px`;
       }
 
       setInterval(() => {
@@ -120,8 +155,19 @@
           goDown();
         }
 
-        tails.push({ x: headX, y: headY });
+        tails.push({ x: head.x, y: head.y });
         tails.shift();
+
+        if (head.x === prey.x && head.y === prey.y) {
+          tails.push({ x: head.x, y: head.y });
+          generateNewPrey();
+        }
+
+        for (let i = 0; i < tails.length - 1; i++) {
+          if (head.x === tails[i].x && head.y === tails[i].y) {
+            alert("Game Over!!");
+          }
+        }
 
         render();
       }, 200);
@@ -137,15 +183,6 @@
           changeDircetion("right");
         }
       });
-
-      setInterval(() => {
-        function spawnPrey() {
-          preyX = Math.floor(Math.random() * 100);
-          preyY = Math.floor(Math.random() * 100);
-          return preyX, preyY;
-        }
-        render();
-      }, 1);
     </script>
   </body>
 </html>
